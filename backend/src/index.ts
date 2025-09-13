@@ -58,16 +58,25 @@ function makeMatch(queue: string[], queueName: string) {
     // Notify users
     io.to(u1).emit("match-found", name);
     io.to(u2).emit("match-found", name);
+
+    if (queueName === "video") {
+      io.to(u1).emit("ready", { initiator: true });
+      io.to(u2).emit("ready", { initiator: false });
+    }
+
+    return;
   }
 }
 
 function handleDisconnect(socketId: string) {
   // Find the room
-  const roomIndex = rooms.findIndex((r) => r.u1 === socketId || r.u2 === socketId);
+  const roomIndex = rooms.findIndex(
+    (r) => r.u1 === socketId || r.u2 === socketId
+  );
 
   if (roomIndex !== -1) {
     const room = rooms[roomIndex];
-    if(!room)return
+    if (!room) return;
     const { name, u1, u2, queue } = room;
 
     // Notify the other user
@@ -92,7 +101,6 @@ function handleDisconnect(socketId: string) {
   }
   removeUser(socketId);
 }
-
 
 // =======================
 // Express Setup
@@ -135,9 +143,23 @@ io.on("connection", (socket) => {
     socket.to(data.room).emit("stopTyping");
   });
 
-  // Custom disconnect event (for Back button)
-  socket.on("disconnecting", () => {
-    handleDisconnect(socket.id);
+  //for the video chat
+  socket.on("vc", () => {
+    addToQ(videoQueue, socket.id);
+    io.to(socket.id).emit("waiting", "Finding a match for you...");
+    makeMatch(videoQueue, "video");
+  });
+
+  socket.on("offer", (room: string, offer: any) => {
+    socket.to(room).emit("offer", offer);
+  });
+
+  socket.on("answer", (room: string, answer: any) => {
+    socket.to(room).emit("answer", answer);
+  });
+
+  socket.on("ice", (room: string, candidate: any) => {
+    socket.to(room).emit("ice-candidate", candidate);
   });
 
   // Actual disconnect
