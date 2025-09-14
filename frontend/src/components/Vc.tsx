@@ -184,7 +184,7 @@ const VideoChat = () => {
           ref={remoteVideoRef}
           autoPlay
           playsInline
-          className="w-full h-full object-cover"
+          className="w-full h-[80vh] object-contain"
         />
 
         {/* Local video as small preview (bottom-right corner) */}
