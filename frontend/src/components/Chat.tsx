@@ -55,7 +55,6 @@ const Chat = () => {
       currentRoomRef.current = null;
       setMessages([{ sender: "system", text: "Finding a match for you..." }]);
       socket.emit("tc");
-      window.location.reload();
     });
 
     return () => {
@@ -70,7 +69,7 @@ const Chat = () => {
   }, []);
 
   const handleSkip = () => {
-    socketRef.current?.emit("skip");
+    socketRef.current?.emit("skip",{room : currentRoomRef.current});
     currentRoomRef.current = null;
     setMessages([
       {
@@ -78,7 +77,6 @@ const Chat = () => {
         text: "You skipped the chat. Searching for a new stranger...",
       },
     ]);
-    socketRef.current?.emit("tc");
   };
 
   const send = () => {

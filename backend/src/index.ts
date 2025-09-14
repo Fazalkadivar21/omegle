@@ -68,6 +68,40 @@ function makeMatch(queue: string[], queueName: string) {
   }
 }
 
+function handleSkip(roomName: string) {
+  // Find the room
+  const roomIndex = rooms.findIndex(
+    (r) => r.name === roomName
+  );
+
+  if (roomIndex !== -1) {
+    const room = rooms[roomIndex];
+    if (!room) return;
+    const { name, u1, u2, queue } = room;
+
+    // Notify the other user
+    io.to(name).emit("peer-disconnected");
+
+    // Remove both users from Socket.IO room
+    io.sockets.sockets.get(u1)?.leave(name);
+    io.sockets.sockets.get(u2)?.leave(name);
+
+    // Remove the room from state
+    rooms.splice(roomIndex, 1);
+
+    // Re-queue the other user
+    if (queue === "text") {
+      textQueue.push(u1);
+      textQueue.push(u2);
+      makeMatch(textQueue, "text");
+    } else if (queue === "video") {
+      videoQueue.push(u1);
+      videoQueue.push(u2);
+      makeMatch(videoQueue, "video");
+    }
+  }
+}
+
 function handleDisconnect(socketId: string) {
   // Find the room
   const roomIndex = rooms.findIndex(
@@ -161,6 +195,12 @@ io.on("connection", (socket) => {
   socket.on("ice", (room: string, candidate: any) => {
     socket.to(room).emit("ice-candidate", candidate);
   });
+
+  socket.on("skip",(room:{room:string})=>{
+    console.log(room.room);
+    
+    handleSkip(room.room)
+  })
 
   // Actual disconnect
   socket.on("disconnect", () => {

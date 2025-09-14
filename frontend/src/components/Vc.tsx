@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router";
 import { io, Socket } from "socket.io-client";
-import { socket } from "../socket";
 
 const VideoChat = () => {
   const socketRef = useRef<Socket | null>(null);
@@ -121,7 +120,6 @@ const VideoChat = () => {
       roomRef.current = null;
       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
       socket.emit("vc");
-      window.location.reload();
     });
 
     return () => {
@@ -131,11 +129,10 @@ const VideoChat = () => {
   }, []);
 
   const handleSkip = () => {
-    socketRef.current?.emit("vc");
+    socketRef.current?.emit("skip",{room : roomRef.current});
     setWaitingMsg("Finding a match for you...");
     setConnected(false);
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
-    socketRef.current?.emit("vc");
     roomRef.current = null;
   };
 
