@@ -23,4 +23,4 @@ jobs:
         working-directory: ./backend
         env:
           SERVER_URL: ${{ secrets.SERVER_URL }}
-        run: node dist/src/worker.js
+        run: node dist/worker.js
