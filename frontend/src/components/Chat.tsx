@@ -16,7 +16,7 @@ const Chat = () => {
   const currentRoomRef = useRef<string | null>(null);
 
   useEffect(() => {
-    socketRef.current = io("https://omegle-henna-ten.vercel.app/");
+  socketRef.current = io(import.meta.env.VITE_SERVER_URL);
     const socket = socketRef.current;
 
     // Join text chat queue

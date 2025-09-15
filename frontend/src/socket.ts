@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-const URL = "https://omegle-henna-ten.vercel.app/";
+const URL = import.meta.env.VITE_SERVER_URL;
 
 export const socket: Socket = io(URL, {
   autoConnect: true,
