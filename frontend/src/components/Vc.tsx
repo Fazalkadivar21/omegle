@@ -17,7 +17,7 @@ const VideoChat = () => {
   const [cameraOff, setCameraOff] = useState(false);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:3000");
+    socketRef.current = io("https://omegle-henna-ten.vercel.app/");
     const socket = socketRef.current;
 
     socket.emit("vc"); // join video queue

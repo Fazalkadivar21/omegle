@@ -3,6 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import { randomUUID } from "crypto";
+import path from "path";
 
 const app = express();
 const http = createServer(app);
@@ -110,6 +111,7 @@ function handleDisconnect(socketId: string) {
 // =======================
 app.use(express.json());
 app.use(cors({ origin: "*" }));
+app.use(express.static(path.join(__dirname,"../public")))
 
 // =======================
 // Socket.IO Setup
@@ -184,6 +186,10 @@ io.on("connection", (socket) => {
 app.get("/", (req, res) => {
   res.send("One piece is real.");
 });
+
+app.get("*name",(req,res)=>{
+  res.sendFile(path.join(__dirname,"../public/index.html"))
+})
 
 // =======================
 // Start Server

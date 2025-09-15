@@ -16,7 +16,7 @@ const Chat = () => {
   const currentRoomRef = useRef<string | null>(null);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:3000");
+    socketRef.current = io("https://omegle-henna-ten.vercel.app/");
     const socket = socketRef.current;
 
     // Join text chat queue
