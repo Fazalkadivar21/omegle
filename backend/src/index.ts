@@ -4,6 +4,11 @@ import { Server } from "socket.io";
 import cors from "cors";
 import { randomUUID } from "crypto";
 import path from "path";
+import { fileURLToPath } from "url";
+
+// Define __dirname for ES modules compatibility
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const http = createServer(app);
