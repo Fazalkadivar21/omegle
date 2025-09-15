@@ -1,0 +1,26 @@
+on:
+  schedule:
+    - cron: '*/14 * * * *'
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm install
+      - name: Wait 58 seconds
+        run: sleep 58
+      - name: Build TypeScript
+        working-directory: ./backend
+        run: npx tsc
+      - name: Run worker
+        working-directory: ./backend
+        env:
+          SERVER_URL: ${{ secrets.SERVER_URL }}
+        run: node dist/src/worker.js
